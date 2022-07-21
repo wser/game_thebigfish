@@ -1,0 +1,168 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>The Big Fish</title>
+
+    <script type="text/javascript" src="js/t.js"></script>
+    <script type="text/javascript" src="js/ivank.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
+    <script type="text/javascript" src="js/MBitmap.js"></script>
+    <script type="text/javascript" src="js/md5.js"></script>
+
+    <script type="text/javascript" src="js/bf.js"></script>
+
+    <script type="text/javascript">
+      var m, stage;
+      function webGLStart() {
+        stage = new Stage('c');
+        stage.addEventListener(Event.RESIZE, resizeGame);
+
+        m = new BFMain(stage.stageWidth, stage.stageHeight);
+        stage.addChild(m);
+        m.resize(stage.stageWidth, stage.stageHeight);
+      }
+      function resizeGame(e) {
+        m.resize(stage.stageWidth, stage.stageHeight);
+      }
+    </script>
+    <style type="text/css">
+      .vab_dialog {
+        font-family: 'Barlow', sans-serif;
+        position: fixed;
+        right: 0;
+        left: 0;
+        top: 15%;
+        margin: auto;
+        z-index: 2147483647;
+        border-radius: 4px;
+        display: -ms-flexbox;
+        display: -webkit-box;
+        display: flex;
+        -ms-flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        -ms-flex-pack: start;
+        -webkit-box-pack: start;
+        justify-content: flex-start;
+        -ms-flex-align: center;
+        -webkit-box-align: center;
+        align-items: center;
+        max-width: 580px;
+        background-color: #ffffff;
+        -webkit-box-shadow: 0 0 22px 7px rgba(0, 0, 0, 0.78);
+        box-shadow: 0 0 22px 7px rgba(0, 0, 0, 0.78);
+        padding: 30px 0;
+      }
+      .vab_dialog .vab_no_entry {
+        width: 40px;
+        height: 40px;
+      }
+      .vab_dialog .are_you_sure {
+        font-size: 30px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #718191;
+        margin: 0 85px;
+      }
+      .vab_dialog .detected {
+        margin: 30px 85px 0 85px;
+        font-size: 30px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #718191;
+      }
+      .vab_dialog .do_you_want {
+        font-size: 21px;
+        font-weight: 600;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #718191;
+        margin: 40px 85px 0 85px;
+      }
+      .vab_dialog .opt_out_msg {
+        margin: 20px 50px 0 50px;
+        font-size: 21px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #718191;
+      }
+      .vab_dialog .vab_buttons {
+        margin-top: 50px;
+        display: -ms-flexbox;
+        display: -webkit-box;
+        display: flex;
+        -ms-flex-direction: row;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        flex-direction: row;
+        -ms-flex-align: center;
+        -webkit-box-align: center;
+        align-items: center;
+      }
+      .vab_dialog .vab_buttons .vab_button {
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        padding: 16px 24px;
+        border-radius: 5px;
+        display: -ms-flexbox;
+        display: -webkit-box;
+        display: flex;
+        -ms-flex-pack: center;
+        -webkit-box-pack: center;
+        justify-content: center;
+        -ms-flex-align: center;
+        -webkit-box-align: center;
+        align-items: center;
+      }
+      .vab_dialog .vab_buttons .vab_button.cancel {
+        border: solid 1px #718191;
+        color: #718191;
+        margin-right: 20px;
+      }
+      .vab_dialog .vab_buttons .vab_button.exit {
+        color: #f55a2e;
+        border: solid 1px #f55a2e;
+        margin-right: 20px;
+      }
+      .vab_dialog .vab_buttons .vab_button.continue {
+        background-color: #8a95ff;
+        color: #ffffff;
+      }
+    </style>
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0"
+    />
+  </head>
+
+  <body onload="webGLStart();" style="margin: 0; overflow: hidden">
+    <canvas
+      id="c"
+      width="1218"
+      height="555"
+      style="width: 1218px; height: 555px; cursor: default"
+    ></canvas>
+  </body>
+</html>
