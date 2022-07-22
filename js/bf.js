@@ -44,6 +44,82 @@ class KAPI {
       i.initMouseEvent('click', !0,!0, document.defaultView, 1, 0, 0, 0, 0, !1, !1, !1,!1, 0, null ),
         e.dispatchEvent(i);
     };
+    this._resend = function () {
+      var t = new XMLHttpRequest();
+      t.open('POST', '//kapi.ivank.net/record.php', !0),
+        (t.onload = KAPI._recordResent);
+      var e = KAPI._netRecordParams() + '&read=2';
+      t.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'),
+        t.send(e);
+    };
+    this._loadNetRecord = function () {
+      var t = new XMLHttpRequest();
+      t.open('POST', '//kapi.ivank.net/record.php', !0),
+        (t.onload = this._recordLoaded);
+      var e = this._netRecordParams() + '&read=1';
+      t.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'),
+        t.send(e);
+    };
+    this._saveNetRecord = function (t) {
+      var e = new XMLHttpRequest();
+      e.open('POST', '//kapi.ivank.net/record.php', !0),
+        (e.onload = this._recordSaved);
+      var i =
+        this._netRecordParams() +
+        '&read=0&score=' +
+        this.getScore(t) +
+        '&spublic=' +
+        this._spublic +
+        '&record=' +
+        encodeURIComponent(JSON.stringify(t));
+      e.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'),
+        e.send(i);
+    };
+    this._recordLoaded = function (t) {
+      var e = JSON.parse(t.target.response);
+      if (e.error);
+      else {
+        this._user = e.user;
+        var i = this._getLocalRecord(),
+          s = e.record;
+        e.record
+          ? ((this._spublic = e.spublic),
+            null == i || this.getScore(s) >= this.getScore(i)
+              ? this._saveLocalRecord(s)
+              : this._saveNetRecord(i))
+          : i && this._saveNetRecord(i);
+      }
+      this._setToken(e.token), this._initResp();
+    };
+    this._saveLocalRecord = function (t) {
+      var e = JSON.stringify(t);
+      (localStorage[this._appID + '_stateLocal'] = e),
+        (localStorage[this._appID + '_hashLocal'] = md5(e + 'x62a1fz-3vb'));
+    };
+    this._recordResent = function (t) {
+      var e = JSON.parse(t.target.response);
+      this._setToken(e.token);
+    };
+    this._recordSaved = function (t) {
+      var e = JSON.parse(t.target.response);
+      this._setToken(e.token),
+        this._savedResp && (this._savedResp(), (this._savedResp = null));
+    };
+    this._netRecordParams = function () {
+      return (
+        'app=' +
+        this._appID +
+        '&uid=' +
+        localStorage[this._appID + '_uid'] +
+        '&token=' +
+        localStorage[this._appID + '_token']
+      );
+    };
+    this._queryParam = function (t) {
+      t = t.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var e = new RegExp('[\\?&]' + t + '=([^&#]*)').exec(location.search);
+      return null === e ? null : decodeURIComponent(e[1].replace(/\+/g, ' '));
+    };
   }
   GetScorePublic = function () {
     return this._spublic;
@@ -68,6 +144,9 @@ class KAPI {
     ),
       (s.onload = this._scoresLoaded),
       s.send();
+  };
+  SaveRecord = function (t) {
+    this._saveLocalRecord(t), this.online() && this._saveNetRecord(t);
   };
 }
 
@@ -630,85 +709,14 @@ class Button extends Sprite {
       encodeURIComponent(window.location.href);
     KAPI._loginWindow = window.open(t, '_blank');
   }),
-  // (KAPI),
   (KAPI._getToken = function () {
     var t = localStorage[KAPI._appID + '_token'];
     return null != t && 0.001 * Date.now() + 10 < parseInt(t.split('-')[0])
       ? t
       : null;
   }),
-  //(KAPI.),
-  (KAPI._resend = function () {
-    var t = new XMLHttpRequest();
-    t.open('POST', '//kapi.ivank.net/record.php', !0),
-      (t.onload = KAPI._recordResent);
-    var e = KAPI._netRecordParams() + '&read=2';
-    t.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'),
-      t.send(e);
-  }),
-  (KAPI._loadNetRecord = function () {
-    var t = new XMLHttpRequest();
-    t.open('POST', '//kapi.ivank.net/record.php', !0),
-      (t.onload = KAPI._recordLoaded);
-    var e = KAPI._netRecordParams() + '&read=1';
-    t.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'),
-      t.send(e);
-  }),
-  (KAPI._saveNetRecord = function (t) {
-    var e = new XMLHttpRequest();
-    e.open('POST', '//kapi.ivank.net/record.php', !0),
-      (e.onload = KAPI._recordSaved);
-    var i =
-      KAPI._netRecordParams() +
-      '&read=0&score=' +
-      KAPI.getScore(t) +
-      '&spublic=' +
-      KAPI._spublic +
-      '&record=' +
-      encodeURIComponent(JSON.stringify(t));
-    e.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'),
-      e.send(i);
-  }),
-  (KAPI._recordLoaded = function (t) {
-    var e = JSON.parse(t.target.response);
-    if (e.error);
-    else {
-      KAPI._user = e.user;
-      var i = KAPI._getLocalRecord(),
-        s = e.record;
-      e.record
-        ? ((KAPI._spublic = e.spublic),
-          null == i || KAPI.getScore(s) >= KAPI.getScore(i)
-            ? KAPI._saveLocalRecord(s)
-            : KAPI._saveNetRecord(i))
-        : i && KAPI._saveNetRecord(i);
-    }
-    KAPI._setToken(e.token), KAPI._initResp();
-  }),
-  (KAPI._recordResent = function (t) {
-    var e = JSON.parse(t.target.response);
-    KAPI._setToken(e.token);
-  }),
-  (KAPI._recordSaved = function (t) {
-    var e = JSON.parse(t.target.response);
-    KAPI._setToken(e.token),
-      KAPI._savedResp && (KAPI._savedResp(), (KAPI._savedResp = null));
-  }),
-  (KAPI._netRecordParams = function () {
-    return (
-      'app=' +
-      KAPI._appID +
-      '&uid=' +
-      localStorage[KAPI._appID + '_uid'] +
-      '&token=' +
-      localStorage[KAPI._appID + '_token']
-    );
-  }),
   (KAPI.GetRecord = function () {
     return KAPI._getLocalRecord();
-  }),
-  (KAPI.SaveRecord = function (t) {
-    KAPI._saveLocalRecord(t), KAPI.online() && KAPI._saveNetRecord(t);
   }),
   (KAPI._getLocalRecord = function () {
     var t,
@@ -722,17 +730,6 @@ class Button extends Sprite {
     }
     return t;
   }),
-  (KAPI._saveLocalRecord = function (t) {
-    var e = JSON.stringify(t);
-    (localStorage[KAPI._appID + '_stateLocal'] = e),
-      (localStorage[KAPI._appID + '_hashLocal'] = md5(e + 'x62a1fz-3vb'));
-  }),
-  (KAPI._queryParam = function (t) {
-    t = t.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var e = new RegExp('[\\?&]' + t + '=([^&#]*)').exec(location.search);
-    return null === e ? null : decodeURIComponent(e[1].replace(/\+/g, ' '));
-  }),
-  //(KAPI),
   (KAPI.UI = {}),
   (KAPI.UI.Panel = function () {
     var t;
